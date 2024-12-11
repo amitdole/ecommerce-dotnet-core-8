@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Discount.Api": {
+    "http": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:9002"
+      "applicationUrl": "http://localhost:5164"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -25,7 +25,8 @@
       "environmentVariables": {
         "ASPNETCORE_HTTP_PORTS": "8080"
       },
-      "publishAllPorts": true
+      "publishAllPorts": true,
+      "useSSL": false
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -33,7 +34,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:41136",
+      "applicationUrl": "http://localhost:27331",
       "sslPort": 0
     }
   }

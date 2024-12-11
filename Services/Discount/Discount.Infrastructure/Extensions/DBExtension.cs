@@ -30,24 +30,40 @@ namespace Discount.Infrastructure.Extensions
 
         private static void ApplyMigrations(IConfiguration config)
         {
-            using var connection = new NpgsqlConnection(config.GetValue<string>("DatabaseSettings:ConnectionString"));
-            connection.Open();
-            using var command = new NpgsqlCommand
+            var retry = 5;
+            while (retry > 0)
             {
-                Connection = connection
-            };
+                try
+                {
+                    using var connection = new NpgsqlConnection(config.GetValue<string>("DatabaseSettings:ConnectionString"));
+                    connection.Open();
+                    using var command = new NpgsqlCommand
+                    {
+                        Connection = connection
+                    };
 
-            command.CommandText = "DROP TABLE IF EXISTS Coupon";
-            command.ExecuteNonQuery();
+                    command.CommandText = "DROP TABLE IF EXISTS Coupon";
+                    command.ExecuteNonQuery();
 
-            command.CommandText = @"CREATE TABLE Coupon(Id SERIAL PRIMARY KEY, ProductName VARCHAR(500) NOT NULL, Description TEXT, Amount INT)";
-            command.ExecuteNonQuery();
+                    command.CommandText = @"CREATE TABLE Coupon(Id SERIAL PRIMARY KEY, ProductName VARCHAR(500) NOT NULL, Description TEXT, Amount INT)";
+                    command.ExecuteNonQuery();
 
-            command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('Adidas Quick Force Indoor Badminton Shoes', 'Shoe Discount', 550)";
-            command.ExecuteNonQuery();
+                    command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('Adidas Quick Force Indoor Badminton Shoes', 'Shoe Discount', 550)";
+                    command.ExecuteNonQuery();
 
-            command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('Yonex VCORE Pro 100 A Tennis Racquet (270gm, Strung) 10', 'Racquet Discount', 700)";
-            command.ExecuteNonQuery();
+                    command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('Yonex VCORE Pro 100 A Tennis Racquet (270gm, Strung) 10', 'Racquet Discount', 700)";
+                    command.ExecuteNonQuery();
+
+                    break;
+                }
+                catch (Exception)
+                {
+                    retry--;
+                    if (retry == 0)
+                        throw;
+                    Thread.Sleep(2000);
+                }
+            }
         }
     }
 }

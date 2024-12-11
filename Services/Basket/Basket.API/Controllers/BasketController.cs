@@ -4,6 +4,7 @@ using System.Net;
 using Basket.Application.Responses;
 using Basket.Application.Queries;
 using Basket.Application.Commands;
+using Basket.Application.GrpService;
 
 namespace Basket.API.Controllers
 {
