@@ -4,17 +4,17 @@
     {
         public string UserName { get; set; }
         public decimal TotalPrice { get; set; }
-        public decimal FirstName { get; set; }
-        public decimal LastName { get; set; }
-        public decimal EmailAddress { get; set; }
-        public decimal AddressLine { get; set; }
-        public decimal Country { get; set; }
-        public decimal State { get; set; }
-        public decimal ZipCode { get; set; }
-        public decimal CardName { get; set; }
-        public decimal CardNumber { get; set; }
-        public decimal Expiration { get; set; }
-        public decimal CVV { get; set; }
-        public decimal PaymentMethod { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string EmailAddress { get; set; }
+        public string AddressLine { get; set; }
+        public string Country { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
+        public string CardName { get; set; }
+        public string CardNumber { get; set; }
+        public string Expiration { get; set; }
+        public string CVV { get; set; }
+        public string PaymentMethod { get; set; }
     }
 }
