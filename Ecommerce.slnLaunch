@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Infrastructure\\EShopping.Identity\\EShopping.Identity.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

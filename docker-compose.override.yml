@@ -149,3 +149,15 @@ services:
       - "8003:8080"
     command: >
        /bin/sh -c "dotnet ef database update --p ../Ordering.Infrastructure -s /Ordering.API && dotnet Ordering.API.dll"
+
+  ocelot.apigateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - catalog.api
+      - basket.api
+      - discount.api
+      - ordering.api
+    ports:
+      - "8010:8080"
+

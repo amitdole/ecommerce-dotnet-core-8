@@ -10,13 +10,17 @@ using MassTransit;
 using Common.Logging;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers();
+
 //Serilog Configurations
 builder.Host.UseSerilog(Logging.ConfigureLogger);
-builder.Services.AddControllers();
 
 //Add Api Versioning
 builder.Services.AddApiVersioning(cfg =>
@@ -100,6 +104,23 @@ builder.Services.AddMassTransitHostedService();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Identity Server
+
+//var userPolicy = new AuthorizationPolicyBuilder()
+//    .RequireAuthenticatedUser()
+//    .Build();
+
+//builder.Services.AddControllers(config =>
+//{
+//    config.Filters.Add(new AuthorizeFilter(userPolicy));
+//});
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options => {
+//        options.Authority = "https://localhost:9009";
+//        options.Audience = "Basket";
+//    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -114,7 +135,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 

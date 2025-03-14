@@ -10,10 +10,10 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers();
 
 //Serilog Configurations
 builder.Host.UseSerilog(Logging.ConfigureLogger);
-builder.Services.AddControllers();
 
 builder.Services.AddApiVersioning(cfg =>
 {
@@ -45,6 +45,28 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, ProductRepository>();
 builder.Services.AddScoped<ITypesRepository, ProductRepository>();
 
+//Identity Server
+
+//var userPolicy = new AuthorizationPolicyBuilder()
+//    .RequireAuthenticatedUser()
+//    .Build();
+
+//builder.Services.AddControllers(config =>
+//{
+//    config.Filters.Add(new AuthorizeFilter(userPolicy));
+//});
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>{
+//        options.Authority = "https://localhost:9009";
+//        options.Audience = "Catalog";
+//});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanRead", policy => policy.RequireClaim("scope", "catalogapi.read"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +77,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 
