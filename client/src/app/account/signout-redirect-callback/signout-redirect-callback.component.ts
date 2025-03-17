@@ -8,16 +8,18 @@ import { AccountService } from '../account.service';
   selector: 'app-signout-redirect-callback',
   template: `<div></div>`
 })
-export class SignoutRedirectCallbackComponent implements OnInit {
+export class SignoutRedirectCallbackComponent 
+//implements OnInit 
+{
 
   constructor(private _router: Router, private acntService: AccountService) { }
 
-  ngOnInit(): void {
+  // ngOnInit(): void {
 
-    this.acntService.finishLogout()
-    .then(_ => {
-      this._router.navigate(['/'], { replaceUrl: true });
-    })
-  }
+  //   this.acntService.finishLogout()
+  //   .then(_ => {
+  //     this._router.navigate(['/'], { replaceUrl: true });
+  //   })
+  // }
 
 }

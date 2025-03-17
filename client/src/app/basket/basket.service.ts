@@ -37,11 +37,12 @@ export class BasketService {
     });
   }
 
-  checkoutBasket(basket: IBasket){
+  async checkoutBasket(basket: IBasket){
+    const token = await this.acntService.authorizationHeaderValue; 
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
-        'Authorization': this.acntService.authorizationHeaderValue
+        'Authorization': token
       })
     };
     return this.http.post<IBasket>(this.baseUrl +'/Basket/CheckoutV2', basket, httpOptions).subscribe({

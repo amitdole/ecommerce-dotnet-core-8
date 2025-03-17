@@ -5,6 +5,8 @@ import { ReplaySubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { User, UserManager, UserManagerSettings } from 'oidc-client';
 import { Constants } from './constants';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 
 @Injectable({
@@ -16,50 +18,84 @@ export class AccountService {
   // Hence for that ReplaySubject. I have given to hold one user object and it will cache this as well
   private currentUserSource = new ReplaySubject<any>(1);
   currentUser$ = this.currentUserSource.asObservable();
+
+  //identity server
   private manager = new UserManager(getClientSettings());
   private user!: User | null;
-  token = "";
-  access_token = "";
+  // token = "";
+  // access_token = "";
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.manager.getUser().then(user => {
-      this.user = user;
-      this.currentUserSource.next(this.isAuthenticated());
-    });
+  constructor(private http: HttpClient, private router: Router, private msalService: MsalService) {
+    // this.manager.getUser().then(user => {
+    //   this.user = user;
+    //   this.currentUserSource.next(this.isAuthenticated());
+    // });
+    //Check if user is authenticated and set user state accordingly
+    if (this.msalService.instance.getActiveAccount()){
+      this.currentUserSource.next(this.msalService.instance.getActiveAccount());
+    }
   }
 
   isAuthenticated(): boolean {
-    return this.user != null && !this.user.expired;
+    // return this.user != null && !this.user.expired;
+    return this.msalService.instance.getActiveAccount() !== null;
   }
 
-  login() {
-    return this.manager.signinRedirect();
+  login(state?: string) {
+    //return this.manager.signinRedirect();
+    //const state = this.router.url;
+    this.msalService.loginRedirect({
+      scopes: ['openid', 'profile', 'https://sportscenter29.onmicrosoft.com/fc93cce5-e708-4e2b-9b8b-20f96db8abf3'],
+      state: state
+    });
   }
 
   async signout() {
     await this.manager.signoutRedirect();
   }
 
-  get authorizationHeaderValue(): string {
-    console.log(this.token);
-    console.log(this.access_token);
-    return `${this.token} ${this.access_token}`;
+  SetUserAfterRedirect():void{
+    const account = this.msalService.instance.getActiveAccount();
+    console.log('account', account);
+    if(account){
+      this.currentUserSource.next(account);
+    }else{
+      this.currentUserSource.next(null);
+    } 
+  }
+
+  get authorizationHeaderValue(): Promise<string> {
+    const account = this.msalService.instance.getActiveAccount();
+    if (account) {
+       return this.msalService.instance.acquireTokenSilent({
+        scopes: ['openid', 'profile'],
+        account: account
+        }).then((results: AuthenticationResult)=> {
+          return `${results.tokenType} ${results.accessToken}`;
+        });
+    }
+    return Promise.resolve('');
   }
 
   logout() {
-    localStorage.removeItem('token');
+    //localStorage.removeItem('token');
+    this.msalService.logoutRedirect({
+      postLogoutRedirectUri: 'http://localhost:4200'
+    });
     this.currentUserSource.next(null);
-    this.router.navigateByUrl('/');
+    //this.router.navigateByUrl('/');
   }
-  public finishLogin = (): Promise<User> => {
-    return this.manager.signinRedirectCallback()
-    .then(user => {
-      this.currentUserSource.next(this.checkUser(user));
-      this.token = user.token_type;
-      this.access_token = user.access_token;
-      return user;
-    })
-  }
+
+  
+  // public finishLogin = (): Promise<User> => {
+  //   return this.manager.signinRedirectCallback()
+  //   .then(user => {
+  //     this.currentUserSource.next(this.checkUser(user));
+  //     this.token = user.token_type;
+  //     this.access_token = user.access_token;
+  //     return user;
+  //   })
+  // }
 
   public finishLogout = () => {
     this.user = null;
@@ -71,6 +107,8 @@ export class AccountService {
     console.log(user);
     return !!user && !user.expired;
   }
+
+
 
 }
 

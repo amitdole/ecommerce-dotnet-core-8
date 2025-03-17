@@ -1,3 +1,40 @@
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
 docker-compose down
+
+
+dotnet new install Duende.IdentityServer.Templates
+dotnet new isinmem -n EShopping.Identity
+
+docker tag catalogapi amitdole/catalogapi:latest
+
+docker push amitdole/catalogapi:latest
+
+kubectl apply -f mongo-secret.yaml
+kubectl apply -f mongo-configmap.yaml
+kubectl apply -f catalog-db.yaml
+
+kubectl get all
+
+kubectl apply -f catalog-api.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+kubectl describe secret -n kube-system
+
+token?
+kubectl create serviceaccount dashboard-admin-sa -n kubernetes-dashboard
+serviceaccount/dashboard-admin-sa created
+kubectl create clusterrolebinding dashboard-admin-sa --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:dashboard-admin-sa
+kubectl create token dashboard-admin-sa -n kubernetes-dashboard
+
+docker tag catalogapi:latest eshopping.azurecr.io/catalogapi:v1
+docker tag basketapi:latest eshopping.azurecr.io/basketapi:v1
+docker tag discountapi:latest eshopping.azurecr.io/discountapi:v1
+docker tag orderingapi:latest eshopping.azurecr.io/orderingapi:v1
+
+az acr login --name eShopping
+
+docker push eshopping.azurecr.io/catalogapi:v1
+docker push eshopping.azurecr.io/basketapi:v1
+docker push eshopping.azurecr.io/discountapi:v1
+docker push eshopping.azurecr.io/orderingapi:v1

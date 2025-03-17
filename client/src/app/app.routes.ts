@@ -11,6 +11,7 @@ import { RegisterComponent } from './account/register/register.component';
 import { CheckoutComponent } from './checkout/checkout/checkout.component';
 import { SigninRedirectCallbackComponent } from './account/signin-redirect-callback/signin-redirect-callback.component';
 import { SignoutRedirectCallbackComponent } from './account/signout-redirect-callback/signout-redirect-callback.component';
+import { MsalGuard } from '@azure/msal-angular';
 
 export const routes: Routes = [
     {path: '', component:HomeComponent, data: {breadcrumb: 'Home'}},    

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { BasketService } from '../../basket/basket.service';
 import { AccountService } from '../../account/account.service';
 import { IBasket, IBasketItem } from '../../shared/models/basket';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { OrderSummaryComponent } from '../../shared/order-summary/order-summary.component';
 
 @Component({
@@ -16,13 +16,19 @@ import { OrderSummaryComponent } from '../../shared/order-summary/order-summary.
   styleUrl: './checkout.component.scss'
 })
 export class CheckoutComponent implements OnInit {
-  constructor(public basketService: BasketService, private acntService: AccountService){}
+  constructor(
+    public basketService: BasketService, 
+    private acntService: AccountService,
+    private router: Router){}
 
   ngOnInit(): void {
     this.acntService.currentUser$.subscribe({
-      next:(res) =>{
-        this.isUserAuthenticated = res;
+      next:(user) =>{
+        this.isUserAuthenticated = !!user;
         console.log(this.isUserAuthenticated);
+        if(!this.isUserAuthenticated){
+          this.acntService.login(this.router.url);
+        }
       },error:(err) =>{
         console.log(`An error occurred while setting isUserAuthenticated flag.`)
       }

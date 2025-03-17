@@ -21,8 +21,8 @@ export class NavbarComponent implements OnInit  {
   ngOnInit(): void {
     console.log(`current user:`);
     this.acntService.currentUser$.subscribe({
-      next:(res) =>{
-        this.isUserAuthenticated = res;
+      next:(user) =>{
+        this.isUserAuthenticated = !!user;
         console.log(this.isUserAuthenticated);
       },error:(err) =>{
         console.log(`An error occurred while setting isUserAuthenticated flag.`)
